@@ -1,4 +1,4 @@
-# Prediction des revenus d'un film - Analyse exploratoire et apprentissage machine avec ElasticNet
+# Prediction des revenus d'un film
 
 # Objectifs:
 Création d'un modèle prédictif pour estimer les revenus d'un film en fonction des métadonnées publiques TMDB.
@@ -14,4 +14,7 @@ Le projet ci-joint fournit le code complet et reproductible basé sur scikit-lea
 - Application de TransformedTargetRegressor sur la cible pour obtenir les métriques en dollars
 - Métriques: RMSE / MAE / R2 / SMAPE et graphiques des résidus, QQ-Plot
 - Export csv des prédictions
-Instructions
+
+## Contenu
+- src/
+
