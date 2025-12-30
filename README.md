@@ -1,18 +1,12 @@
 
 # TMDb — Pipeline ElasticNet (TF‑IDF + SVD + Numériques + CV)
 
-Ce dépôt contient un **script complet** de modélisation pour prédire le revenu des films à partir du dataset **TMDb 5000**. 
-Le pipeline inclut : parsing JSON (genres, keywords, studios, pays, langues, cast/crew, title), TF‑IDF par blocs avec **SVD** de compression, 
-transformations numériques (Yeo‑Johnson, log1p), **ElasticNet** avec **TransformedTargetRegressor**, **RandomizedSearchCV**, et un rapport 
-d'évaluation (RMSE/MAE/R²/SMAPE) + figures (résidus, QQ‑plot, réel vs prédit).
+Ce dépôt contient un script complet de modélisation pour prédire le revenu des films à partir du dataset **TMDb 5000**. 
+Le pipeline inclut : parsing JSON (genres, keywords, studios, pays, langues, cast/crew, title), TF‑IDF par blocs avec compression SVD, 
+transformations numériques (Yeo‑Johnson, log1p), utilisation du modèle ElasticNet qui a donné de meilleurs résultats par rapport au Random Forest ou CatBoost avec TransformedTargetRegressor pour reconvertir la prédiction dans la valeur de la cible initiale, RandomizedSearchCV pour optimiser les hyperparamètres, et un rapport d'évaluation des valeurs RMSE/MAE/R²/SMAPE + figures résidus, QQ‑plot, réel vs prédit.
 
----
 
-## 🎯 Objectifs
-- Déposer un **produit final fonctionnel** exécutable de bout en bout.
-- Assurer **organisation, complétude, pertinence, efficience et qualité** : README, dépendances, structure, sorties.
-
-## 🗂️ Structure du dépôt
+## Structure du dépôt
 ```text
 tmdb-elasticnet-pipeline/
 ├── src/
@@ -28,18 +22,18 @@ tmdb-elasticnet-pipeline/
 └── README.md                  # Ce fichier
 ```
 
-> Des `.gitkeep` sont présents pour permettre le suivi Git des dossiers vides.
 
-## 📦 Données
+
+## Données
 - **Source** : Kaggle — *TMDb 5000 Movie Dataset* via `kagglehub` (`tmdb/tmdb-movie-metadata`).
 - Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`.
 
-## 🔧 Prérequis
+## Prérequis
 - Python 3.10+
 - Internet (pour `kagglehub`)
 - `pip`
 
-## 🚀 Installation
+## Installation
 ```bash
 git clone <URL_DU_DEPOT_GITHUB>.git
 cd tmdb-elasticnet-pipeline
@@ -49,7 +43,7 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## ▶️ Exécution
+## Exécution
 ```bash
 python src/main.py
 ```
@@ -58,7 +52,7 @@ Le script :
 - Télécharge les données via `kagglehub`
 - Prépare les colonnes (dates → year/month/day_of_week, parsing JSON, transformations)
 - Construit TF‑IDF par blocs + SVD
-- Monte un `ColumnTransformer` (TF‑IDF compressé + numériques avec interactions)
+- Monte un `ColumnTransformer` (TF‑IDF compressé + numériques)
 - Entraîne **ElasticNet** via `TransformedTargetRegressor` (cible Yeo‑Johnson)
 - Cherche les hyperparamètres (`RandomizedSearchCV`) sur `KFold` stratifié par quantiles de la cible
 - Évalue sur le test et génère plots + fichiers de sortie
