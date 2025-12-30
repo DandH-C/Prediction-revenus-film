@@ -1,66 +1,81 @@
 
-# TMDb — Prédiction des revenus des films
+# TMDb — Pipeline ElasticNet (TF‑IDF + SVD + Numériques + CV)
 
-Projet de modélisation pour prédire le revenu mondial des films à partir des métadonnées TMDb.
-Le dépôt propose un pipeline complet (prétraitement JSON → TF‑IDF → SVD → features numériques →
-modèles ElasticNet/Tweedie) et une évaluation sur un jeu de test tenu à part.
+Ce dépôt contient un **script complet** de modélisation pour prédire le revenu des films à partir du dataset **TMDb 5000**. 
+Le pipeline inclut : parsing JSON (genres, keywords, studios, pays, langues, cast/crew, title), TF‑IDF par blocs avec **SVD** de compression, 
+transformations numériques (Yeo‑Johnson, log1p), **ElasticNet** avec **TransformedTargetRegressor**, **RandomizedSearchCV**, et un rapport 
+d'évaluation (RMSE/MAE/R²/SMAPE) + figures (résidus, QQ‑plot, réel vs prédit).
+
+---
 
 ## 🎯 Objectifs
-- Produit final fonctionnel (exécutable de bout en bout)
-- Organisation, complétude, pertinence, efficience et qualité
+- Déposer un **produit final fonctionnel** exécutable de bout en bout.
+- Assurer **organisation, complétude, pertinence, efficience et qualité** : README, dépendances, structure, sorties.
 
-## 🗂️ Structure
+## 🗂️ Structure du dépôt
 ```text
-tmdb-revenue-prediction/
+tmdb-elasticnet-pipeline/
 ├── src/
-│   ├── main.py                # Script principal A/B (ElasticNet vs Tweedie)
-│   ├── preprocessing.py        # Fonctions de parsing JSON & features
-│   ├── modeling.py             # Construction des pipelines & CV
-│   └── utils.py                # Métriques, I/O, logs
-├── notebooks/                  # EDA & essais
-├── outputs/                    # Prédictions, métriques, figures
-├── data/                       # (optionnel) données locales / README
-├── configs/                    # Fichiers de configuration YAML/JSON
-├── tests/                      # Tests unitaires
-├── docs/                       # Docs additionnelles
-├── requirements.txt
-├── README.md
-├── .gitignore
-└── LICENSE
+│   └── main.py                # Script principal (le code fourni)
+├── notebooks/                 # EDA, analyses complémentaires
+├── outputs/                   # Prédictions, métriques, figures
+├── data/                      # (optionnel) données locales
+├── configs/                   # (optionnel) fichiers de configuration
+├── tests/                     # (optionnel) tests unitaires
+├── docs/                      # Documentation additionnelle
+├── requirements.txt           # Dépendances Python
+├── .gitignore                 # Ignore cache/venv/data/outputs
+└── README.md                  # Ce fichier
 ```
+
+> Des `.gitkeep` sont présents pour permettre le suivi Git des dossiers vides.
+
+## 📦 Données
+- **Source** : Kaggle — *TMDb 5000 Movie Dataset* via `kagglehub` (`tmdb/tmdb-movie-metadata`).
+- Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`.
+
+## 🔧 Prérequis
+- Python 3.10+
+- Internet (pour `kagglehub`)
+- `pip`
 
 ## 🚀 Installation
 ```bash
 git clone <URL_DU_DEPOT_GITHUB>.git
-cd tmdb-revenue-prediction
+cd tmdb-elasticnet-pipeline
+
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## ▶️ Exécution (Version A/B)
+## ▶️ Exécution
 ```bash
-# Variante A (ElasticNet + Yeo-Johnson, CV temporelle)
-python src/main.py --version A --cv time --transform yeo-johnson --n-folds 6 --n-iter 60
-
-# Variante B (Tweedie, CV temporelle)
-python src/main.py --version B --cv time --n-folds 6 --n-iter 60
+python src/main.py
 ```
 
-Paramètres : `--version [A|B]`, `--transform [yeo-johnson|log1p|none]`, `--cv [time|group|strat_kfold]`, `--clip-negative`.
+Le script :
+- Télécharge les données via `kagglehub`
+- Prépare les colonnes (dates → year/month/day_of_week, parsing JSON, transformations)
+- Construit TF‑IDF par blocs + SVD
+- Monte un `ColumnTransformer` (TF‑IDF compressé + numériques avec interactions)
+- Entraîne **ElasticNet** via `TransformedTargetRegressor` (cible Yeo‑Johnson)
+- Cherche les hyperparamètres (`RandomizedSearchCV`) sur `KFold` stratifié par quantiles de la cible
+- Évalue sur le test et génère plots + fichiers de sortie
 
 ## 📈 Sorties
-- `outputs/tmdb_predictions_test_<VERSION>.csv`
-- `outputs/metrics_<VERSION>.json`
-- `outputs/figures/`
+- Prédictions test : `outputs/tmdb_elasticnet_predictions_test.csv`
+- Corrélations (train) :
+  - `outputs/tmdb_correlations_train_yj.csv`
+  - `outputs/tmdb_correlations_train_raw.csv`
+- Figures d'évaluation (affichées à l'écran; vous pouvez les sauvegarder dans `outputs/figures/` si vous le souhaitez)
 
-## 🔍 Reproductibilité
-- `RANDOM_STATE` fixé dans le code
-- versions figées dans `requirements.txt`
-- CV temporelle
+## 🧪 Qualité
+- Code commenté et structuré.
+- Reproductibilité : `RANDOM_STATE` fixé, versions figées.
 
 ## 📝 Licence
-MIT — voir `LICENSE`
+- MIT — voir `LICENSE`.
 
 ## 👤 Auteur
-CABANA David
+- CABANA David — Digital Monitoring Center Coordinator
