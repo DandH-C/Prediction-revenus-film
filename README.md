@@ -1,6 +1,6 @@
 # Prediction des revenus d'un film
 
-# Objectifs:
+## Objectifs:
 Création d'un modèle prédictif pour estimer les revenus d'un film en fonction des métadonnées publiques de TMDB.
 Le projet ci-joint fournit le code complet et reproductible basé sur scikit-learn.
 
