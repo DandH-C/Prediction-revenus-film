@@ -42,13 +42,12 @@ pip install -r requirements.txt
 ```bash
 Pour spécifier le chemin des fichiers sauvegardés en local, utilisez cette syntaxe:
 'python main.py --data-source local --data-dir ./<mondossier>'
-- Assurez-vous que le dossier spécifié contienne les deux fichiers .csv.
+Assurez-vous que le dossier spécifié contienne les deux fichiers .csv.
 ```
 
 ## Exécution en ligne
 Copier/coller le script fourni dans un notebook Colab ou Jupyter.
-Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`lorsqu'exécuté en ligne.
-
+Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`.
 
 ## Le script :
 - Prépare les colonnes (dates → year/month/day_of_week, parsing JSON, transformations).
@@ -66,7 +65,6 @@ Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `t
 - Figures d'évaluation: affichées à l'écran; vous pouvez les sauvegarder si vous le souhaitez.
 
 ## Licence
-
 Ce projet est sous licence **MIT**.
 
 Vous êtes libre d'utiliser, copier, modifier, fusionner, publier, distribuer, sous-licencier et/ou vendre des copies du logiciel, sous réserve d'inclure la mention de copyright et la présente notice dans toutes les copies ou parties substantielles du logiciel.
@@ -74,4 +72,4 @@ Vous êtes libre d'utiliser, copier, modifier, fusionner, publier, distribuer, s
 Consultez le fichier [LICENSE](LICENSE) pour plus de détails
 
 ## Auteur
-- David Cabana
+David Cabana
