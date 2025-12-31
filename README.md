@@ -39,11 +39,11 @@ Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 ### Récupération des fichiers csv sauvegardés localement
-```bash
 Pour spécifier le chemin des fichiers sauvegardés en local, utilisez cette syntaxe:
+```bash
 'python main.py --data-source local --data-dir ./<mondossier>'
-Assurez-vous que le dossier spécifié contienne les deux fichiers .csv.
 ```
+Assurez-vous que le dossier spécifié contienne les deux fichiers .csv.
 
 ## Exécution en ligne
 Copier/coller le script fourni dans un notebook Colab ou Jupyter.
