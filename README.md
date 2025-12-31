@@ -32,7 +32,8 @@ cd tmdb-elasticnet-pipeline
 ### Lancement de l'environnement virtuel
 ```bash
 python -m venv .venv
-Windows: .venv\Scripts\activate
+
+.venv\Scripts\activate
 ```
 ### Installation des requis
 ```bash
