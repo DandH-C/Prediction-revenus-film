@@ -34,7 +34,7 @@ git clone <URL_DU_DEPOT_GITHUB>.git
 cd tmdb-elasticnet-pipeline
 
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
