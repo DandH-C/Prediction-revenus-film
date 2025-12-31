@@ -7,7 +7,7 @@ transformations numériques (Yeo‑Johnson, log1p), utilisation du modèle Elast
 
 
 ## Structure du dépôt
-
+```text
 tmdb-elasticnet-pipeline/
 ├── src/
 │   └── main.py                # Script principal (le code fourni)
@@ -15,7 +15,7 @@ tmdb-elasticnet-pipeline/
 ├── outputs/                   # Prédictions, métriques, figures
 ├── requirements.txt           # Dépendances Python
 └── README.md                  # Ce fichier
-
+```
 
 ## Données
 - **Source** : Kaggle — *TMDb 5000 Movie Dataset* via `kagglehub` (`tmdb/tmdb-movie-metadata`).
