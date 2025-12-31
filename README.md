@@ -58,12 +58,5 @@ Le script :
   - `outputs/tmdb_correlations_train_raw.csv`
 - Figures d'évaluation (affichées à l'écran; vous pouvez les sauvegarder dans `outputs/figures/` si vous le souhaitez)
 
-## Qualité
-- Code commenté et structuré.
-- Reproductibilité : `RANDOM_STATE` fixé, versions figées.
-
-## Licence
-- Aucune licence
-
 ## Auteur
-- CABANA David
+- David Cabana
