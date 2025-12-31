@@ -18,10 +18,10 @@ tmdb-elasticnet-pipeline/
 ```
 
 ## Données
-- **Source** : Kaggle — *TMDb 5000 Movie Dataset* via `kagglehub` (`tmdb/tmdb-movie-metadata`).
-- Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`.
-- Si le paramètre --data-source --data-dir ./<mondossier> est renseigné, le chargement se fera à partir du dossier spécifié.
-- Exemple: python main.py --data-source local --data-dir ./Desktop.
+- **Source** : Kaggle — *TMDb 5000 Movie Dataset* via kagglehub ([tmdb/tmdb-movie-metadata](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)).
+- Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`lorsqu'exécuté en ligne avec Colab entre-autre.
+- Si le paramètre --data-source --data-dir ./<mondossier> est renseigné, le chargement se fera à partir du dossier spécifié par l'utilisateur.
+- Exemple: python main.py --data-source local --data-dir ./Desktop. Assurez-vous que le dossier spécifié contienne les deux fichiers .csv.
 
 ## Prérequis
 - Python 3.10+
@@ -37,26 +37,29 @@ Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Exécution
+## Exécution en ligne
 ```bash
 python src/main.py  (pour chargement à partir de kagglehub)
-python main.py --data-source local --data-dir ./<mondossier> (pour chargement local)
+```
+## Exécution locale
+```bash
+python main.py --data-source local --data-dir ./<mondossier>
 ```
 
 Le script :
-- Prépare les colonnes (dates → year/month/day_of_week, parsing JSON, transformations)
-- Construit TF‑IDF par blocs + SVD
-- Monte un `ColumnTransformer` (TF‑IDF compressé + numériques)
-- Entraîne ElasticNet via `TransformedTargetRegressor` (cible Yeo‑Johnson)
-- Cherche les hyperparamètres (`RandomizedSearchCV`) sur `KFold` stratifié par quantiles de la cible
-- Évalue sur le test et génère plots + fichiers de sortie
+- Prépare les colonnes (dates → year/month/day_of_week, parsing JSON, transformations).
+- Construit TF‑IDF par blocs + SVD.
+- Monte un ColumnTransformer (TF‑IDF compressé + numériques).
+- Entraîne ElasticNet via TransformedTargetRegressor (cible Yeo‑Johnson).
+- Cherche les hyperparamètres RandomizedSearchCV sur KFold stratifié par quantiles de la cible.
+- Évalue sur le test et génère plots + fichiers de sortie.
 
 ## Sorties
 - Prédictions test : `outputs/predictions_test.csv`
 - Corrélations (train) :
   - `outputs/tmdb_correlations_train_yj.csv`
   - `outputs/tmdb_correlations_train_raw.csv`
-- Figures d'évaluation (affichées à l'écran; vous pouvez les sauvegarder dans `outputs/figures/` si vous le souhaitez)
+- Figures d'évaluation: affichées à l'écran; vous pouvez les sauvegarder si vous le souhaitez.
 
 ## Auteur
 - David Cabana
