@@ -18,7 +18,7 @@ tmdb-elasticnet-pipeline/
 ```
 
 ## Données
-- **Source** : Kaggle — *TMDb 5000 Movie Dataset* via kagglehub ([tmdb/tmdb-movie-metadata](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)).
+- **Source** : Kaggle ([tmdb/tmdb-movie-metadata](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)) — *TMDb 5000 Movie Dataset* via l'api kagglehub.
 - Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`lorsqu'exécuté en ligne avec Colab entre-autre.
 - Si le paramètre --data-source --data-dir ./<mondossier> est renseigné, le chargement se fera à partir du dossier spécifié par l'utilisateur.
 - Exemple: python main.py --data-source local --data-dir ./Desktop. Assurez-vous que le dossier spécifié contienne les deux fichiers .csv.
@@ -27,24 +27,29 @@ tmdb-elasticnet-pipeline/
 - Python 3.10+
 - Installation des librairies contenues dans le fichier requirements.txt
 
-## Installation
+## Exécution locale
 ```bash
 git clone <URL_DU_DEPOT_GITHUB>.git
 cd tmdb-elasticnet-pipeline
-
+```
+### Lancement de l'environnement virtuel
+```bash
 python -m venv .venv
 Windows: .venv\Scripts\activate
+```
+### Installation des requis
+```bash
 pip install -r requirements.txt
 ```
-
-## Exécution en ligne
-```bash
-python src/main.py  (pour chargement à partir de kagglehub)
-```
-## Exécution locale
+### Récupération des fichiers csv sauvegardés localement
 ```bash
 python main.py --data-source local --data-dir ./<mondossier>
 ```
+
+## Exécution en ligne
+Copier/coller le script fourni dans un notebook Colab ou Jupyter.
+
+
 
 Le script :
 - Prépare les colonnes (dates → year/month/day_of_week, parsing JSON, transformations).
