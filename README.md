@@ -22,11 +22,11 @@ tmdb-elasticnet-pipeline/
 - **Source** : Kaggle — *TMDb 5000 Movie Dataset* via `kagglehub` (`tmdb/tmdb-movie-metadata`).
 - Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`.
 - Si le paramètre --data-source --data-dir ./<mondossier> est renseigné, le chargement se fera à partir du dossier spécifié.
+  Exemple: python main.py --data-source local --data-dir ./Desktop.
 
 ## Prérequis
 - Python 3.10+
-- Internet (pour `kagglehub`)
-- pip
+- Installation des librairies contenues dans le fichier requirements.txt
 
 ## Installation
 ```bash
@@ -40,11 +40,11 @@ pip install -r requirements.txt
 
 ## Exécution
 ```bash
-python src/main.py
+python src/main.py  (pour chargement à partir de kagglehub)
+python main.py --data-source local --data-dir ./<mondossier> (pour chargement local)
 ```
 
 Le script :
-- Télécharge les données via `kagglehub`
 - Prépare les colonnes (dates → year/month/day_of_week, parsing JSON, transformations)
 - Construit TF‑IDF par blocs + SVD
 - Monte un `ColumnTransformer` (TF‑IDF compressé + numériques)
