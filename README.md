@@ -13,25 +13,20 @@ tmdb-elasticnet-pipeline/
 │   └── main.py                # Script principal (le code fourni)
 ├── notebooks/                 # EDA, analyses complémentaires
 ├── outputs/                   # Prédictions, métriques, figures
-├── data/                      # (optionnel) données locales
-├── configs/                   # (optionnel) fichiers de configuration
-├── tests/                     # (optionnel) tests unitaires
-├── docs/                      # Documentation additionnelle
 ├── requirements.txt           # Dépendances Python
-├── .gitignore                 # Ignore cache/venv/data/outputs
 └── README.md                  # Ce fichier
 ```
-
 
 
 ## Données
 - **Source** : Kaggle — *TMDb 5000 Movie Dataset* via `kagglehub` (`tmdb/tmdb-movie-metadata`).
 - Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`.
+- Si le paramètre --data-source --data-dir ./<mondossier> est renseigné, le chargement se fera à partir du dossier spécifié.
 
 ## Prérequis
 - Python 3.10+
 - Internet (pour `kagglehub`)
-- `pip`
+- pip
 
 ## Installation
 ```bash
@@ -53,23 +48,23 @@ Le script :
 - Prépare les colonnes (dates → year/month/day_of_week, parsing JSON, transformations)
 - Construit TF‑IDF par blocs + SVD
 - Monte un `ColumnTransformer` (TF‑IDF compressé + numériques)
-- Entraîne **ElasticNet** via `TransformedTargetRegressor` (cible Yeo‑Johnson)
+- Entraîne ElasticNet via `TransformedTargetRegressor` (cible Yeo‑Johnson)
 - Cherche les hyperparamètres (`RandomizedSearchCV`) sur `KFold` stratifié par quantiles de la cible
 - Évalue sur le test et génère plots + fichiers de sortie
 
-## 📈 Sorties
-- Prédictions test : `outputs/tmdb_elasticnet_predictions_test.csv`
+## Sorties
+- Prédictions test : `outputs/predictions_test.csv`
 - Corrélations (train) :
   - `outputs/tmdb_correlations_train_yj.csv`
   - `outputs/tmdb_correlations_train_raw.csv`
 - Figures d'évaluation (affichées à l'écran; vous pouvez les sauvegarder dans `outputs/figures/` si vous le souhaitez)
 
-## 🧪 Qualité
+## Qualité
 - Code commenté et structuré.
 - Reproductibilité : `RANDOM_STATE` fixé, versions figées.
 
-## 📝 Licence
-- MIT — voir `LICENSE`.
+## Licence
+- Aucune licence
 
-## 👤 Auteur
-- CABANA David — Digital Monitoring Center Coordinator
+## Auteur
+- CABANA David
