@@ -689,8 +689,6 @@ corr_feats = [c for c in corr_feats if c in df_json_parse.columns]
 df_corr_train = df_json_parse.loc[X_train.index].copy()
 
 corr_yj_df = correlations_with_target(df_corr_train, feat_cols=corr_feats, target_col="revenue_yj")
-print("\nCorrélations Pearson/Spearman vs revenue_yj train")
-display(corr_yj_df)
 show_plotly_table(corr_yj_df, title="Corrélations vs revenue_yj (TRAIN)")
 
 # Export corrélation avec valeurs transformées
@@ -698,8 +696,6 @@ corr_yj_df.to_csv("tmdb_correlations_train_yj.csv", index=False)
 print("Exporté: tmdb_correlations_train_yj.csv")
 
 corr_raw_df = correlations_with_target(df_corr_train, feat_cols=corr_feats, target_col="revenue")
-print("\nCorrélations Pearson/Spearman vs revenue train")
-display(corr_raw_df)
 show_plotly_table(corr_raw_df, title="Corrélations vs revenue (TRAIN)")
 
 # Export du csv des corrélations avec valeurs raw
