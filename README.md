@@ -38,12 +38,12 @@ python -m venv .venv
 .venv\Scripts\activate
 ```
 
-### Récupération des fichiers csv sauvegardés localement
+### Exécution et récupération des fichiers csv sauvegardés localement
 Pour spécifier le chemin des fichiers sauvegardés en local, utilisez cette syntaxe:
 ```bash
 python main.py --data-source local --data-dir ./<mondossier>
 ```
-Remplacez <mondossier> par votre nom de dossier actuel. Assurez-vous que celui-ci contienne les deux fichiers .csv.
+Remplacez 'mondossier' par votre nom de dossier actuel. Assurez-vous que celui-ci contienne les deux fichiers .csv.
 
 ## Exécution en ligne
 Copier/coller le script fourni dans un notebook Colab ou Jupyter.
@@ -56,10 +56,11 @@ Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `t
 - Entraîne ElasticNet via TransformedTargetRegressor et la cible transformée Yeo‑Johnson.
 - Cherche les hyperparamètres RandomizedSearchCV sur KFold stratifié par quantiles de la cible.
 - Évalue sur le test et génère plots + fichiers de sortie.
+- Certaines portions sont commentées. Elles ont été utiles lors de la création du script pour mieux comprendre les données.
 
 ## Sorties
-- Prédictions test : `outputs/predictions_test.csv`
-- Corrélations (train) :
+- Prédictions: `outputs/predictions_test.csv`
+- Corrélations (train):
   - `outputs/tmdb_correlations_train_yj.csv`
   - `outputs/tmdb_correlations_train_raw.csv`
 - Figures d'évaluation: affichées à l'écran; vous pouvez les sauvegarder si vous le souhaitez.
