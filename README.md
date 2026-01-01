@@ -1,5 +1,5 @@
 
-# TMDb — Pipeline ElasticNet ###(TF‑IDF + SVD + Numériques + CV)
+# TMDb — Pipeline ElasticNet (TF‑IDF, SVD et CV)
 
 Ce dépôt contient un script complet de modélisation pour prédire le revenu des films à partir du dataset **TMDb 5000**. 
 Le pipeline inclut : parsing JSON (genres, keywords, studios, pays, langues, cast/crew, title), TF‑IDF par blocs avec compression SVD, 
