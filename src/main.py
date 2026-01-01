@@ -152,57 +152,58 @@ df["month"] = df["release_date"].dt.month
 df["day_of_week"] = df["release_date"].dt.dayofweek
 df = df.drop(columns=["release_date"])
 
+
 # =========================================================
-# 3) Variable cible + EDA initiale
+# 3) Variable cible + EDA initiale (tout en une seule figure)
 # =========================================================
 y_raw = pd.to_numeric(df["revenue"], errors="coerce")
 mask = y_raw.notna()
 y = y_raw[mask].to_numpy().reshape(-1, 1)
 
-# Visualiser l'asymétrie de la variable brut
-print(f"Asymétrie avant: {y_raw.skew():.3f}")
-
-# Histogramme de l'asymétrie de la variable brut
-plt.figure(figsize=(8, 4))
-plt.hist(y_raw.dropna(), bins=50, color="steelblue", alpha=0.8)
-plt.title("Distribution des revenus avant transformation")
-plt.xlabel("Revenue"); plt.ylabel("Fréquences")
-plt.gca().xaxis.set_major_formatter(ScalarFormatter(useMathText=False))
-plt.ticklabel_format(style="plain", axis="y")
-plt.show()
-
 # Transformation Yeo-Johnson
 y_yj = PowerTransformer(method="yeo-johnson").fit_transform(y)
-print(f"Asymétrie après Yeo-Johnson: {skew(y_yj.flatten(), bias=False):.3f}")
 
 # Ajout colonne revenue_yj
 df["revenue_yj"] = np.nan
 df.loc[mask, "revenue_yj"] = y_yj.flatten()
 
-# Histogramme de l'asymétrie de la variable transformée YJ
-plt.figure(figsize=(8, 4))
-plt.hist(y_yj, bins=50, color="darkorange", alpha=0.8)
-plt.title("Distribution des revenus après transformation")
-plt.xlabel("revenus_YJ"); plt.ylabel("Fréquences")
-plt.gca().xaxis.set_major_formatter(ScalarFormatter(useMathText=False))
-plt.ticklabel_format(style="plain", axis="y")
+# Préparation pour l'affichage
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+(ax1, ax2), (ax3, ax4) = axes
+
+# Histogramme de l'asymétrie de la variable brut
+ax1.hist(y_raw.dropna(), bins=50, color="steelblue", alpha=0.8)
+ax1.set_title(f"Distribution des revenus avant transformation. Asymétrie: {y_raw.skew():.3f}")
+ax1.set_xlabel("Revenue"); ax1.set_ylabel("Fréquences")
+ax1.xaxis.set_major_formatter(ScalarFormatter(useMathText=False))
+ax1.ticklabel_format(style="plain", axis="y")
+
+# Histogramme de la variable transformée YJ
+ax2.hist(y_yj, bins=50, color="darkorange", alpha=0.8)
+ax2.set_title(f"Distribution des revenus après transormation Yeo-Johnson. Asymétrie: {skew(y_yj.flatten(), bias=False):.3f}")
+ax2.set_xlabel("revenus_YJ"); ax2.set_ylabel("Fréquences")
+ax2.xaxis.set_major_formatter(ScalarFormatter(useMathText=False))
+ax2.ticklabel_format(style="plain", axis="y")
+
+# QQ-plot: revenue brut
+st.probplot(df["revenue"].dropna(), dist="norm", plot=ax3)
+ax3.set_title("QQ-plot: revenue brut")
+
+# QQ-plot: revenue YJ
+st.probplot(df["revenue_yj"].dropna(), dist="norm", plot=ax4)
+ax4.set_title("QQ-plot: revenue YJ")
+
+plt.tight_layout()
 plt.show()
 
-# Visualiser si la nouvelle variable suit une distribution normale
-fig, ax = plt.subplots(1, 2, figsize=(10,4))
-st.probplot(df["revenue"].dropna(), dist="norm", plot=ax[0]); ax[0].set_title("QQ-plot: revenue brut")
-st.probplot(df["revenue_yj"].dropna(), dist="norm", plot=ax[1]); ax[1].set_title("QQ-plot: revenue YJ")
-plt.show()
 
 # Shape du dataframe
 # print(f"Shape finale: {df.shape}")
 
 # Voir si nous avons des valeurs absentes
-_na_tbl = df.isna().sum().rename("NaN")
-show_plotly_table(_na_tbl, title="Valeurs nulles ou NaN par colonne")
+#na_tbl = df.isna().sum().rename("NaN")
+#show_plotly_table(na_tbl, title="Valeurs nulles ou NaN par colonne")
 
-# Afficher le nom des colonnes
-# print("\nColonnes finales:", df.columns.tolist())
 
 # =========================================================
 # 4) Parsing JSON (normalisation des textes + tokens)
@@ -333,8 +334,6 @@ plt.show()
 
 # Création des asymétries des colonnes numériques originales
 sk_num = df_json_parse[num_col].skew(numeric_only=True)
-print("Asymetrie des variables numériques:")
-print(sk_num.sort_values(ascending=False))
 show_plotly_table(sk_num.sort_values(ascending=False).rename("skew"), title="Asymétrie des variables numériques")
 
 # =========================================================
@@ -385,10 +384,8 @@ plt.show()
 
 
 # Création des asymétrie des colonnes numériques transformées
-print("Asymétrie des variables numériques transformées:")
-_print_sk_new = df_json_parse[new_num_col].skew(numeric_only=True).sort_values(ascending=False)
-print(_print_sk_new)
-show_plotly_table(_print_sk_new.rename("skew"), title="Asymétrie des variables numériques transformées")
+sk_new = df_json_parse[new_num_col].skew(numeric_only=True).sort_values(ascending=False)
+show_plotly_table(sk_new.rename("skew"), title="Asymétrie des variables numériques transformées")
 
 # =========================================================
 # 7) Modélisation
@@ -487,14 +484,14 @@ def correlations_with_target(df: pd.DataFrame, feat_cols: list, target_col: str 
         # Masque pour les lignes valides seulement
         valid = x.notna() & y.notna()
         if valid.sum() < 3:
-            rows.append({"feature": col, "pearson_r": np.nan, "pearson_p": np.nan,
+            rows.append({"feature": col, "pearson_r": np.nan, "pearson_pValue": np.nan,
                          "spearman_rho": np.nan, "spearman_p": np.nan, "n": int(valid.sum())})
             continue
 
         # Calcul des corrélations + p-values linéaires et monotone
         r,  p  = pearsonr(x[valid], y[valid])
         rs, ps = spearmanr(x[valid], y[valid])
-        rows.append({"feature": col, "pearson_r": r, "pearson_p": p,
+        rows.append({"feature": col, "pearson_r": r, "pearson_pValue": p,
                      "spearman_rho": rs, "spearman_p": ps, "n": int(valid.sum())})
 
     # Assemblage du df
@@ -502,7 +499,7 @@ def correlations_with_target(df: pd.DataFrame, feat_cols: list, target_col: str 
     if not out.empty:
         out["abs_pearson"] = out["pearson_r"].abs()
         out = out.sort_values("abs_pearson", ascending=False).drop(columns=["abs_pearson"])
-    # Tableau contenant les colonnes features, pearson_r, pearson_p, spearman_rho, spearman_p et n.
+    # Tableau contenant les colonnes features, pearson_r, pearson_pValue, spearman_rho, spearman_p et n.
     return out.reset_index(drop=True)
 
 # Assemblage des df train et test
@@ -584,10 +581,34 @@ def evaluate(estimator, Xte, yte, ytr, title="ElasticNet"):
     # Pourcentage d'erreur sur les montants initiaux
     s_mape = smape(yte, y_pred)
 
+    
+    metrics = {
+        "RMSE": rmse,
+        "MAE": mae,
+        "R²": r2,
+        "SMAPE (%)": s_mape,
+        "RMSE de base": rmse_base,
+        "Gain vs base (%)": gain,
+    }
+    df_tbl = pd.DataFrame(metrics, index=[title]).T.reset_index()
+    df_tbl.columns = ["Mesure", "Valeur"]
+
+    fig = go.Figure(data=[go.Table(
+        header=dict(values=list(df_tbl.columns),
+                    fill_color="#f2f2f2", align="left"),
+        cells=dict(values=[df_tbl[c].astype(str).tolist() for c in df_tbl.columns],
+                   align="left")
+    )])
+    fig.update_layout(title=f"Évaluation {title} – Tableau des métriques",
+                      height=min(120 + 28*len(df_tbl), 700),
+                      margin=dict(l=10, r=10, t=40, b=10))
+    fig.show()
+
+
     # Print des résultats
-    print(f"\nÉvaluation {title}")
-    print(f"RMSE: {rmse:.2f} | MAE: {mae:.2f} | R²: {r2:.4f} | SMAPE: {s_mape:.2f}%")
-    print(f"RMSE de base: {rmse_base:.2f} | Gain vs base: {gain:.1f}%")
+   # print(f"\nÉvaluation {title}")
+   # print(f"RMSE: {rmse:.2f} | MAE: {mae:.2f} | R²: {r2:.4f} | SMAPE: {s_mape:.2f}%")
+   # print(f"RMSE de base: {rmse_base:.2f} | Gain vs base: {gain:.1f}%")
     return {"rmse": rmse, "mae": mae, "r2": r2, "smape": s_mape, "Base rmse": rmse_base, "gain en %": gain}
 
 # Exécution des métriques pour trouver le meilleur ajustement possible
