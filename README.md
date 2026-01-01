@@ -10,50 +10,50 @@ transformations numériques (Yeo‑Johnson, log1p), utilisation du modèle Elast
 ```text
 tmdb-elasticnet-pipeline/
 ├── src/
-│   └── main.py                # Script principal (le code fourni)
-├── notebooks/                 # EDA, analyses complémentaires
+│   └── main.py                # Script principal
 ├── outputs/                   # Prédictions, métriques, figures
 ├── requirements.txt           # Dépendances Python
+├── resultats                  # Résultats et explications
 └── README.md                  # Ce fichier
 ```
 
 ## Données
-- **Source** : Kaggle ([tmdb/tmdb-movie-metadata](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)) — *TMDb 5000 Movie Dataset* via l'api kagglehub.
+- **Source** : Kaggle — *TMDb 5000 Movie Dataset*.
 
 ## Prérequis
 - Python 3.10+
-- Installation des librairies contenues dans le fichier requirements.txt
+- pip 25+
 
 ## Exécution locale
-```bash
-git clone <URL_DU_DEPOT_GITHUB>.git
-cd tmdb-elasticnet-pipeline
+- Téléchargez les fichiers csv qui se trouvent sous ici:([tmdb/tmdb-movie-metadata](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)).
+- Cliquez télécharger le zip pour ce GitHub et décompresser-le sur votre machine.
+- Installez les librairies nécessaire:
+  ```bash
+pip install -r requirements.txt
 ```
+  
 ### Lancement de l'environnement virtuel
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 ```
-### Installation des requis
-```bash
-pip install -r requirements.txt
-```
+
 ### Récupération des fichiers csv sauvegardés localement
 Pour spécifier le chemin des fichiers sauvegardés en local, utilisez cette syntaxe:
 ```bash
-'python main.py --data-source local --data-dir ./<mondossier>'
+python main.py --data-source local --data-dir ./<mondossier>
 ```
-Assurez-vous que le dossier spécifié contienne les deux fichiers .csv.
+Remplacez <mondossier> par votre nom de dossier actuel. Assurez-vous que celui-ci contienne les deux fichiers .csv.
 
 ## Exécution en ligne
 Copier/coller le script fourni dans un notebook Colab ou Jupyter.
 Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`.
 
 ## Le script :
-- Prépare les colonnes (dates → year/month/day_of_week, parsing JSON, transformations).
+- Prépare les colonnes (dates -> year/month/day_of_week, parsing JSON, transformations).
 - Construit TF‑IDF par blocs + SVD.
 - Monte un ColumnTransformer (TF‑IDF compressé + numériques).
-- Entraîne ElasticNet via TransformedTargetRegressor (cible Yeo‑Johnson).
+- Entraîne ElasticNet via TransformedTargetRegressor et la cible transformée Yeo‑Johnson.
 - Cherche les hyperparamètres RandomizedSearchCV sur KFold stratifié par quantiles de la cible.
 - Évalue sur le test et génère plots + fichiers de sortie.
 
