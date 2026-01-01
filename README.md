@@ -28,7 +28,7 @@ tmdb-elasticnet-pipeline/
 - Téléchargez les fichiers csv qui se trouvent sous ici:([tmdb/tmdb-movie-metadata](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)).
 - Cliquez télécharger le zip pour ce GitHub et décompresser-le sur votre machine.
 - Installez les librairies nécessaire:
-  ```bash
+```bash
 pip install -r requirements.txt
 ```
   
