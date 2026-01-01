@@ -485,21 +485,21 @@ def correlations_with_target(df: pd.DataFrame, feat_cols: list, target_col: str 
         valid = x.notna() & y.notna()
         if valid.sum() < 3:
             rows.append({"feature": col, "pearson_r": np.nan, "pearson_pValue": np.nan,
-                         "spearman_rho": np.nan, "spearman_p": np.nan, "n": int(valid.sum())})
+                         "spearman_rho": np.nan, "spearman_pValue": np.nan, "n": int(valid.sum())})
             continue
 
         # Calcul des corrélations + p-values linéaires et monotone
         r,  p  = pearsonr(x[valid], y[valid])
         rs, ps = spearmanr(x[valid], y[valid])
         rows.append({"feature": col, "pearson_r": r, "pearson_pValue": p,
-                     "spearman_rho": rs, "spearman_p": ps, "n": int(valid.sum())})
+                     "spearman_rho": rs, "spearman_pValue": ps, "n": int(valid.sum())})
 
     # Assemblage du df
     out = pd.DataFrame(rows)
     if not out.empty:
         out["abs_pearson"] = out["pearson_r"].abs()
         out = out.sort_values("abs_pearson", ascending=False).drop(columns=["abs_pearson"])
-    # Tableau contenant les colonnes features, pearson_r, pearson_pValue, spearman_rho, spearman_p et n.
+    # Tableau contenant les colonnes features, pearson_r, pearson_pValue, spearman_rho, spearman_pValue et n.
     return out.reset_index(drop=True)
 
 # Assemblage des df train et test
