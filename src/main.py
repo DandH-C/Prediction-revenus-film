@@ -15,7 +15,6 @@ from plotly.subplots import make_subplots
 
 from scipy.stats import skew, pearsonr, spearmanr
 from matplotlib.ticker import ScalarFormatter
-from IPython.display import display
 
 import kagglehub
 import statsmodels.api as sm
@@ -200,8 +199,6 @@ plt.show()
 # print(f"Shape finale: {df.shape}")
 
 # Voir si nous avons des valeurs absentes
-print("\nValeurs nulles ou NaN par colonne pour df:")
-display(df.isna().sum())  # nombre de NaN par colonne
 _na_tbl = df.isna().sum().rename("NaN")
 show_plotly_table(_na_tbl, title="Valeurs nulles ou NaN par colonne")
 
