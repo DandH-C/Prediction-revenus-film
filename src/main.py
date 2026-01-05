@@ -1,4 +1,4 @@
-# Imports
+# Importation des librairies
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import seaborn as sns
 import scipy.stats as st
+from math import ceil
 
 from scipy.stats import skew, pearsonr, spearmanr
 from matplotlib.ticker import ScalarFormatter
@@ -28,10 +29,9 @@ from sklearn.model_selection import train_test_split, RandomizedSearchCV, KFold,
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
-# Paramètres
+# Random_state pour reproductibilité et paramètres de la variable cible ainsi que les colonnes json
 RANDOM_STATE = 42
 TARGET_COL = "revenue"
-
 JSON_COLS = ["genres", "keywords", "production_companies", "production_countries", "spoken_languages", "cast", "crew", "title"]
 
 # Valeurs min/max pour la sélection des mots
@@ -43,7 +43,7 @@ TITLE_MAX_FEATURES = 15000
 SVD_PER_BLOCK = {"cast":180, "crew":180, "kw":450, "genres":20, "pc":300, "cty":40, "lang":40, "title":200}
 
 # Paramètres K-fold
-N_FOLDS = 8    # Pour une exécution rapide mais moins précise, choisir entre 3 et 8
+N_FOLDS = 8    # Choisir entre 3 et 8
 N_ITER  = 150  # Ici, entre 40 et 250
 
 # Sélection pour kaggle, entre fichiers locaux ou en ligne
@@ -52,12 +52,10 @@ parser.add_argument("--data-source", choices=["kaggle", "local"], default="kaggl
 parser.add_argument("--data-dir", type=str, default="data", help="Répertoire local contenant tmdb_5000_movies.csv et tmdb_5000_credits.csv")
 args, _ = parser.parse_known_args()
 
+
 # Fonction pour créer une table matplotlib 
 def show_mpl_table(obj, title=None, max_rows=1000, max_cols=40, fontsize=10, col_width=1.8):
-    """
-    Affiche un objet tabulaire (pd.DataFrame ou pd.Series) sous forme de tableau Matplotlib,
-    dans une figure dédiée (statique, sans ouverture web).
-    """
+
     # Normalisation en DataFrame
     if isinstance(obj, pd.Series):
         df_tbl = obj.to_frame(name=(obj.name or "value")).reset_index()
@@ -67,7 +65,7 @@ def show_mpl_table(obj, title=None, max_rows=1000, max_cols=40, fontsize=10, col
     elif isinstance(obj, pd.DataFrame):
         df_tbl = obj.reset_index()
     else:
-        return  # on ignore les objets non tabulaires
+        return 
 
     # Tronquer
     df_tbl = df_tbl.iloc[:max_rows, :max_cols].copy()
@@ -79,10 +77,10 @@ def show_mpl_table(obj, title=None, max_rows=1000, max_cols=40, fontsize=10, col
 
     n_rows, n_cols = df_display.shape
 
-    # Dimension de la figure (heuristique simple)
+    # Dimension de la figure
     # Hauteur = en-tête + lignes, largeur en fonction du nb de colonnes
-    height = min(1.2 + 0.30 * n_rows, 12)           # limite la hauteur maxi
-    width  = min(1.0 + col_width * n_cols, 18)      # limite la largeur maxi
+    height = min(1.2 + 0.30 * n_rows, 12)           
+    width  = min(1.0 + col_width * n_cols, 18)    
 
     fig, ax = plt.subplots(figsize=(width, height))
     ax.axis('off')  # pas d'axes
@@ -92,18 +90,12 @@ def show_mpl_table(obj, title=None, max_rows=1000, max_cols=40, fontsize=10, col
     col_labels  = [str(c) for c in df_display.columns]
 
     # Création du tableau
-    table = ax.table(
-        cellText=cell_text,
-        colLabels=col_labels,
-        loc='center',
-        cellLoc='left',
-        colLoc='left'
-    )
+    table = ax.table(cellText=cell_text, colLabels=col_labels, loc='center', cellLoc='left', colLoc='left')
 
     # Style de l'en-tête et des cellules
     table.auto_set_font_size(False)
     table.set_fontsize(fontsize)
-    table.scale(1.0, 1.2)  # légère augmentation de hauteur des lignes
+    table.scale(1.0, 1.2) 
 
     # Couleur d'en-tête + gras
     for (row, col), cell in table.get_celld().items():
@@ -117,8 +109,6 @@ def show_mpl_table(obj, title=None, max_rows=1000, max_cols=40, fontsize=10, col
 
     plt.tight_layout()
     plt.show()
-
-
 
 # =========================================================
 # 1) Chargement des données (kagglehub ou local)
@@ -154,6 +144,7 @@ else:
               f"Basculer sur données locales si disponibles…")
         df_movies, df_credits = load_from_local(args.data_dir)
 
+    
 # =========================================================
 # 2) Préparation / Filtrage
 # =========================================================
@@ -239,11 +230,10 @@ ax4.set_title("QQ-plot: revenue YJ")
 plt.tight_layout()
 plt.show()
 
-
-# Shape du dataframe
+# Shape du dataframe / décommentez pour afficher
 # print(f"Shape finale: {df.shape}")
 
-# Voir si nous avons des valeurs absentes
+# Voir si nous avons des valeurs absentes / décommentez pour afficher
 #na_tbl = df.isna().sum().rename("NaN")
 #show_mpl_table(na_tbl, title="Valeurs nulles ou NaN par colonne")
 
@@ -343,9 +333,6 @@ num_col = ["budget", "popularity", "runtime", "vote_average", "year", "month", "
 df_json_parse["revenue_category"] = pd.qcut(df_json_parse["revenue_yj"], q=4, duplicates="drop")
 df_json_parse["revenue_category"] = df_json_parse["revenue_category"].apply(lambda x: pd.Interval(round(x.left, 2), round(x.right, 2)))
 
-
-from math import ceil
-
 cats_order = sorted(df_json_parse["revenue_category"].dropna().unique(), key=lambda iv: (iv.left, iv.right))
 n = len(num_col)
 rows = ceil(n / 3)
@@ -354,20 +341,12 @@ axes = np.array(axes).reshape(-1)  # à plat pour indexer facilement
 
 for i, col in enumerate(num_col):
     ax = axes[i]
-    sns.boxplot(
-        x="revenue_category", y=col,
-        data=df_json_parse,
-        order=cats_order,
-        palette="Set2",
-        showfliers=False,   # évite les points extrêmes qui compressent les boîtes
-        width=0.6,          # boîtes un peu plus fines
-        ax=ax
-    )
+    sns.boxplot(x="revenue_category", y=col, data=df_json_parse, order=cats_order, palette="Set2", showfliers=False, width=0.6, ax=ax)
     ax.set_title(f"{col} vs revenue Yeo Johnson")
     ax.set_xlabel("Revenue Categorie")
     ax.set_ylabel(col)
     for tick in ax.get_xticklabels():
-        tick.set_rotation(30)  # meilleure lisibilité
+        tick.set_rotation(30) 
 
 # masque les axes vides si n < rows*3
 for j in range(i+1, rows*3):
@@ -406,15 +385,7 @@ axes2 = np.array(axes2).reshape(-1)
 
 for i, col in enumerate(new_num_col):
     ax = axes2[i]
-    sns.boxplot(
-        x="revenue_category", y=col,
-        data=df_json_parse,
-        order=cats_order,
-        palette="Set2",
-        showfliers=False,
-        width=0.6,
-        ax=ax
-    )
+    sns.boxplot(x="revenue_category", y=col, data=df_json_parse, order=cats_order, palette="Set2", showfliers=False, width=0.6, ax=ax)
     ax.set_title(f"{col} vs revenue Yeo Johnson")
     ax.set_xlabel("Revenu Categorie")
     ax.set_ylabel(col)
@@ -423,9 +394,7 @@ for i, col in enumerate(new_num_col):
 
 for j in range(i+1, rows2*3):
     fig2.delaxes(axes2[j])
-
 plt.show()
-
 
 # Création des asymétrie des colonnes numériques transformées
 sk_new = df_json_parse[new_num_col].skew(numeric_only=True).sort_values(ascending=False)
@@ -464,7 +433,7 @@ tfidf_tr_parts, tfidf_te_parts = [], []
 for col in JSON_COLS:
     if col not in X_train.columns: continue
     # Si l'on desire afficher sur quelle colonne nous sommes rendu avec le TF-IDF
- #   print(f"[TF-IDF] {col}")
+    #   print(f"[TF-IDF] {col}")
     as_title = (col == "title")
     Xtr_block, Xte_block = tfidf_fit_transform(X_train[col], X_test[col], as_title=as_title)
 
@@ -579,7 +548,6 @@ param_dist = {
     "regressor__clf__alpha": np.unique(np.concatenate([
               np.logspace(-4.5, -0.5, 60),
               np.linspace(0.005, 0.10, 60)])),
-
     "regressor__clf__l1_ratio": np.linspace(0.1, 0.9, 10)}
 
 # CV par quantiles sur y_train avec K-Fold
@@ -603,29 +571,30 @@ cv_rmse = -search.best_score_
 print("Meilleurs paramètres:", search.best_params_)
 print(f"Meilleur RMSE CV: {cv_rmse:.2f}")
 
-# Définition de l'erreur symétrique entre y_true et y_pred (réduction des erreurs avec des valeurs près de 0)
-# Obtenir la plus petite valeur possible
-def smape(y_true, y_pred):
-    y_true = np.asarray(y_true, dtype=float); y_pred = np.asarray(y_pred, dtype=float)
-    denom = (np.abs(y_true) + np.abs(y_pred)); denom[denom == 0] = 1.0
-    return 100.0 * np.mean(2.0 * np.abs(y_pred - y_true) / denom)
-
-# Début des prédictions et RMSE dans la même unité que la cible
+# Fonction de prédictions
 def evaluate(estimator, Xte, yte, ytr, title="ElasticNet"):
+    # Prédictions + métriques
     y_pred = estimator.predict(Xte)
     rmse = np.sqrt(mean_squared_error(yte, y_pred))
-    # Génération du mae pour les outliers
     mae  = mean_absolute_error(yte, y_pred)
     r2   = r2_score(yte, y_pred)
-    # Comparer avec une prédiction faisant la moyenne seulement
+
+    # Baseline = moyenne de y_train
     ybar = np.full_like(yte, fill_value=ytr.mean())
     rmse_base = np.sqrt(mean_squared_error(yte, ybar))
     gain = 100.0 * (1.0 - rmse / rmse_base)
 
-    # Pourcentage d'erreur sur les montants initiaux
+    # SMAPE
+    # Définition de l'erreur symétrique entre y_true et y_pred (réduction des erreurs avec des valeurs près de 0)
+    def smape(y_true, y_pred):
+        y_true = np.asarray(y_true, dtype=float); y_pred = np.asarray(y_pred, dtype=float)
+        denom = (np.abs(y_true) + np.abs(y_pred))
+        denom[denom == 0] = 1.0
+        return 100.0 * np.mean(2.0 * np.abs(y_pred - y_true) / denom)
+
     s_mape = smape(yte, y_pred)
 
-    
+    # Tableau des métriques
     metrics = {
         "RMSE": rmse,
         "MAE": mae,
@@ -637,22 +606,9 @@ def evaluate(estimator, Xte, yte, ytr, title="ElasticNet"):
     df_tbl = pd.DataFrame(metrics, index=[title]).T.reset_index()
     df_tbl.columns = ["Mesure", "Valeur"]
 
-    fig = go.Figure(data=[go.Table(
-        header=dict(values=list(df_tbl.columns),
-                    fill_color="#f2f2f2", align="left"),
-        cells=dict(values=[df_tbl[c].astype(str).tolist() for c in df_tbl.columns],
-                   align="left")
-    )])
-    fig.update_layout(title=f"Évaluation {title} – Tableau des métriques",
-                      height=min(120 + 28*len(df_tbl), 700),
-                      margin=dict(l=10, r=10, t=40, b=10))
-    fig.show()
+    # Affichage du tableau en Matplotlib
+    show_mpl_table(df_tbl, title=f"Évaluation {title} – Tableau des métriques")
 
-
-    # Print des résultats
-   # print(f"\nÉvaluation {title}")
-   # print(f"RMSE: {rmse:.2f} | MAE: {mae:.2f} | R²: {r2:.4f} | SMAPE: {s_mape:.2f}%")
-   # print(f"RMSE de base: {rmse_base:.2f} | Gain vs base: {gain:.1f}%")
     return {"rmse": rmse, "mae": mae, "r2": r2, "smape": s_mape, "Base rmse": rmse_base, "gain en %": gain}
 
 # Exécution des métriques pour trouver le meilleur ajustement possible
@@ -686,7 +642,7 @@ mask_bad  = ~mask_good
 # Préparer l’axe du 3e subplot
 plt.subplot(1, 3, 3)
 
-# Points bons (≤ 10%) en vert
+# Points bons ≤ 10% en vert
 plt.scatter(y_test_np[mask_good], y_pred_np[mask_good], s=14, alpha=0.75, color="green", label=f"≤ {int(THRESHOLD*100)}%  (n={mask_good.sum()})")
 
 # Points moins bons en orange
@@ -716,33 +672,12 @@ plt.tight_layout(); plt.show()
 
 # Export des prédictions
 pd.DataFrame({"y_test_revenue": y_test.values, "y_pred_revenue": y_pred}).to_csv(
-    "tmdb_elasticnet_predictions_test.csv", index=False
+    "tmdb_elasticnet_predictions.csv", index=False
 )
 print("Exporté: tmdb_elasticnet_predictions_test.csv")
 
 # =========================================================
-# 8) Création des p-values pour validation des hypothèses
-# =========================================================
-X_num_for_inference = sm.add_constant(
-    df_json_parse.loc[X_train.index, ["budget_yj","popularity_log","runtime","vote_average_yj","year","month","day_of_week"]].fillna(0.0))
-y_for_inference = Y.loc[X_train.index].values
-
-ols = sm.OLS(y_for_inference, X_num_for_inference).fit()
-print(ols.summary())
-# Affichage Plotly des coefficients OLS
-_ols_tbl = pd.concat([
-    ols.params.rename("coef"),
-    ols.bse.rename("std err"),
-    ols.tvalues.rename("t"),
-    ols.pvalues.rename("P>|t|"),
-], axis=1)
-_ci = ols.conf_int()
-_ols_tbl["[0.025"] = _ci[0]
-_ols_tbl["0.975]"] = _ci[1]
-show_mpl_table(_ols_tbl, title="Coefficients")
-
-# =========================================================
-# 9) Table des corrélations numériques avec la cible
+# 8) Table des corrélations numériques avec la cible
 # =========================================================
 corr_feats = ["budget_yj","popularity_log","runtime","vote_average_yj","year","month","day_of_week"]
 corr_feats = [c for c in corr_feats if c in df_json_parse.columns]
@@ -756,15 +691,8 @@ show_mpl_table(corr_yj_df, title="Corrélations vs revenue_yj (TRAIN)")
 corr_yj_df.to_csv("tmdb_correlations_train_yj.csv", index=False)
 print("Exporté: tmdb_correlations_train_yj.csv")
 
-corr_raw_df = correlations_with_target(df_corr_train, feat_cols=corr_feats, target_col="revenue")
-show_mpl_table(corr_raw_df, title="Corrélations vs revenue (TRAIN)")
-
-# Export du csv des corrélations avec valeurs raw
-corr_raw_df.to_csv("tmdb_correlations_train_raw.csv", index=False)
-print("Exporté: tmdb_correlations_train_raw.csv")
-
 # =========================================================
-# 10) Heatmap des corrélations - Décommentez pour afficher la matrice
+# 9) Heatmap des corrélations - Décommentez pour afficher la matrice
 # =========================================================
 #plt.figure(figsize=(8, 5))
 #num_for_corr = df_corr_train[corr_feats + ["revenue_yj"]].copy().dropna()
