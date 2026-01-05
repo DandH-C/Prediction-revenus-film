@@ -10,13 +10,21 @@ transformations numériques (Yeo‑Johnson, log1p), utilisation du modèle Elast
 ```text
 tmdb-elasticnet-pipeline/
 ├── src/
-│   └── main.py                # Script principal
-├── outputs/                   # Prédictions, métriques, figures
-│   └── out1
-│   └── out2
-├── requirements.txt           # Dépendances Python
-├── resultats                  # Résultats et explications
-└── README.md                  # Ce fichier
+│   └── main.py                            # Script principal
+├── outputs/                               # Prédictions et corrélations sous format csv
+│   └── Variable cible                     # Distribution et QQ-Plot avant/après transformation Yeo-Johnson
+│   └── Boxplots vs revenus YJ
+│   └── Asymétries pré-traitement
+│   └── Boxplots transformés vs revenus YJ
+│   └── Asymétries après traitement
+├── license                                # Fichier license MIT
+├── requirements.txt                       # Dépendances Python
+├── resultats                              # Résultats et explications
+│   └── Prédictions                        # Histogramme, QQ-Plot et nuage de points des prédictions
+│   └── predictions_test.csv              
+│   └── tmdb_correlations_train_yj.csv     
+│   └── tmdb_correlations_train_raw.csv
+└── README.md                            # Ce fichier
 ```
 
 ## Données
@@ -35,17 +43,19 @@ pip install -r requirements.txt
 - Téléchargez les fichiers csv qui se trouvent [ici](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata).
   
 ### Lancement de l'environnement virtuel
+- Placez-vous à l'endroit où sont sauvegardés vos fichiers. Exemple: cd Desktop
+- Lancez l'environnement virtuel
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 ```
 
 ### Exécution et récupération des fichiers csv sauvegardés localement
-Pour spécifier le chemin des fichiers sauvegardés en local, utilisez cette syntaxe:
+Ensuite, utilisez cette syntaxe:
 ```bash
 python main.py --data-source local --data-dir ./<mondossier>
 ```
-Remplacez 'mondossier' par votre nom de dossier actuel. Assurez-vous que celui-ci contienne les deux fichiers .csv.
+Remplacez 'mondossier' par votre nom de dossier. Assurez-vous que celui-ci contienne les deux fichiers .csv.
 
 ## Exécution en ligne
 Copier/coller le script fourni dans un notebook Colab ou Jupyter.
@@ -63,10 +73,10 @@ Il faudra probablement installer la librairie Kagglehub.
 
 ## Sorties
 - Prédictions: `outputs/predictions_test.csv`
-- Corrélations (train):
+- Corrélations - train:
   - `outputs/tmdb_correlations_train_yj.csv`
   - `outputs/tmdb_correlations_train_raw.csv`
-- Figures d'évaluation: affichées à l'écran; vous pouvez les sauvegarder si vous le souhaitez.
+- Figures d'évaluation: histogramme, QQ-Plot et nuage de points des prédictions. Vous pouvez les sauvegarder si vous le souhaitez.
 
 ## Licence
 Ce projet est sous licence **MIT**.
