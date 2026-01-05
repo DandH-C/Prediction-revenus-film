@@ -7,11 +7,3 @@ matplotlib>=3.7
 seaborn>=0.12
 statsmodels>=0.14
 kagglehub>=0.2
-jupyter>=1.0
-ipykernel>=6.25
-python-dotenv>=1.0
-tqdm>=4.66
-# Dév (optionnel)
-black>=23.0
-flake8>=6.0
-isort>=5.12
