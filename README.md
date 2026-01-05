@@ -12,6 +12,8 @@ tmdb-elasticnet-pipeline/
 ├── src/
 │   └── main.py                # Script principal
 ├── outputs/                   # Prédictions, métriques, figures
+│   └── out1
+│   └── out2
 ├── requirements.txt           # Dépendances Python
 ├── resultats                  # Résultats et explications
 └── README.md                  # Ce fichier
@@ -25,12 +27,12 @@ tmdb-elasticnet-pipeline/
 - pip 25+
 
 ## Exécution locale
-- Téléchargez les fichiers csv qui se trouvent sous ici:([tmdb/tmdb-movie-metadata](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata)).
 - Cliquez télécharger le zip pour ce GitHub et décompresser-le sur votre machine.
 - Installez les librairies nécessaire:
 ```bash
 pip install -r requirements.txt
 ```
+- Téléchargez les fichiers csv qui se trouvent [ici](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata).
   
 ### Lancement de l'environnement virtuel
 ```bash
@@ -47,12 +49,13 @@ Remplacez 'mondossier' par votre nom de dossier actuel. Assurez-vous que celui-c
 
 ## Exécution en ligne
 Copier/coller le script fourni dans un notebook Colab ou Jupyter.
-Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`.
+Le script télécharge automatiquement les fichiers `tmdb_5000_movies.csv` et `tmdb_5000_credits.csv`. 
+Il faudra probablement installer la librairie Kagglehub.
 
-## Le script :
+## À propos du script :
 - Prépare les colonnes (dates -> year/month/day_of_week, parsing JSON, transformations).
-- Construit TF‑IDF par blocs + SVD.
-- Monte un ColumnTransformer (TF‑IDF compressé + numériques).
+- Construit un TF‑IDF par blocs + Single Value Decomposition (SVD).
+- Monte un ColumnTransformer TF‑IDF compressé et numériques.
 - Entraîne ElasticNet via TransformedTargetRegressor et la cible transformée Yeo‑Johnson.
 - Cherche les hyperparamètres RandomizedSearchCV sur KFold stratifié par quantiles de la cible.
 - Évalue sur le test et génère plots + fichiers de sortie.
