@@ -21,9 +21,8 @@ tmdb-elasticnet-pipeline/
 ├── requirements.txt                       # Dépendances Python
 ├── resultats                              # Résultats et explications
 │   └── Prédictions                        # Histogramme, QQ-Plot et nuage de points des prédictions
-│   └── predictions_test.csv              
-│   └── tmdb_correlations_train_yj.csv     
-│   └── tmdb_correlations_train_raw.csv
+│   └── tmdb_elasticnet_predictions.csv    # Export des prédictions sous format .csv          
+│   └── tmdb_correlations_train_yj.csv     # Corrélations et p-value en fonction de revenue transformé Yeo-Johnson
 └── README.md                            # Ce fichier
 ```
 
