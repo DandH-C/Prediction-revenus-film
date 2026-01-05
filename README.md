@@ -23,7 +23,7 @@ tmdb-elasticnet-pipeline/
 │   └── Prédictions                        # Histogramme, QQ-Plot et nuage de points des prédictions
 │   └── tmdb_elasticnet_predictions.csv    # Export des prédictions sous format .csv          
 │   └── tmdb_correlations_train_yj.csv     # Corrélations et p-value en fonction de revenue transformé Yeo-Johnson
-└── README.md                            # Ce fichier
+└── README.md                              # Ce fichier
 ```
 
 ## Données
