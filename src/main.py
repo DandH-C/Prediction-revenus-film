@@ -6,11 +6,9 @@ import os, json, re, unicodedata, math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 import seaborn as sns
 import scipy.stats as st
-
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 from scipy.stats import skew, pearsonr, spearmanr
 from matplotlib.ticker import ScalarFormatter
@@ -29,29 +27,6 @@ from sklearn.linear_model import ElasticNet
 from sklearn.model_selection import train_test_split, RandomizedSearchCV, KFold, TimeSeriesSplit
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-# --- Helper Plotly pour afficher les tableaux (DataFrame/Series) ---
-def show_plotly_table(obj, title=None, max_rows=1000, max_cols=40):
-    if isinstance(obj, pd.Series):
-        df_tbl = obj.to_frame(name=(obj.name or "value")).reset_index()
-        # Renommer proprement la première colonne si nom étrange
-        if not isinstance(df_tbl.columns[0], str) or df_tbl.columns[0] == "index":
-            df_tbl.columns = ["index", df_tbl.columns[1]]
-    elif isinstance(obj, pd.DataFrame):
-        df_tbl = obj.reset_index()
-    else:
-        return  # on ignore les objets non tabulaires
-
-    df_tbl = df_tbl.iloc[:max_rows, :max_cols]
-    header_values = [str(c) for c in df_tbl.columns]
-    cells_values = [df_tbl[c].astype(str).tolist() for c in df_tbl.columns]
-
-    fig = go.Figure(data=[go.Table(
-        header=dict(values=header_values, fill_color="#f2f2f2", align="left"),
-        cells=dict(values=cells_values, align="left"))
-    ])
-    fig.update_layout(title=title or "", height=min(120 + 24*len(df_tbl), 1000),
-                      margin=dict(l=10, r=10, t=40, b=10))
-    fig.show()
 
 # Paramètres
 RANDOM_STATE = 42
@@ -71,11 +46,79 @@ SVD_PER_BLOCK = {"cast":180, "crew":180, "kw":450, "genres":20, "pc":300, "cty":
 N_FOLDS = 8    # Pour une exécution rapide mais moins précise, choisir entre 3 et 8
 N_ITER  = 150  # Ici, entre 40 et 250
 
-
+# Sélection pour kaggle, entre fichiers locaux ou en ligne
 parser = argparse.ArgumentParser(description="TMDb ElasticNet pipeline (local/Kaggle)")
 parser.add_argument("--data-source", choices=["kaggle", "local"], default="kaggle", help="Source des données: 'kaggle' (via kagglehub) ou 'local' (répertoire avec CSV)")
 parser.add_argument("--data-dir", type=str, default="data", help="Répertoire local contenant tmdb_5000_movies.csv et tmdb_5000_credits.csv")
 args, _ = parser.parse_known_args()
+
+# Fonction pour créer une table matplotlib 
+def show_mpl_table(obj, title=None, max_rows=1000, max_cols=40, fontsize=10, col_width=1.8):
+    """
+    Affiche un objet tabulaire (pd.DataFrame ou pd.Series) sous forme de tableau Matplotlib,
+    dans une figure dédiée (statique, sans ouverture web).
+    """
+    # Normalisation en DataFrame
+    if isinstance(obj, pd.Series):
+        df_tbl = obj.to_frame(name=(obj.name or "value")).reset_index()
+        # Si la 1ère colonne s'appelle 'index' ou n'est pas une str, renommer proprement
+        if not isinstance(df_tbl.columns[0], str) or df_tbl.columns[0] == "index":
+            df_tbl.columns = ["index", df_tbl.columns[1]]
+    elif isinstance(obj, pd.DataFrame):
+        df_tbl = obj.reset_index()
+    else:
+        return  # on ignore les objets non tabulaires
+
+    # Tronquer
+    df_tbl = df_tbl.iloc[:max_rows, :max_cols].copy()
+
+    # Conversion en str pour garantir l'affichage
+    df_display = df_tbl.copy()
+    for c in df_display.columns:
+        df_display[c] = df_display[c].astype(str)
+
+    n_rows, n_cols = df_display.shape
+
+    # Dimension de la figure (heuristique simple)
+    # Hauteur = en-tête + lignes, largeur en fonction du nb de colonnes
+    height = min(1.2 + 0.30 * n_rows, 12)           # limite la hauteur maxi
+    width  = min(1.0 + col_width * n_cols, 18)      # limite la largeur maxi
+
+    fig, ax = plt.subplots(figsize=(width, height))
+    ax.axis('off')  # pas d'axes
+
+    # Données pour le tableau
+    cell_text   = df_display.values.tolist()
+    col_labels  = [str(c) for c in df_display.columns]
+
+    # Création du tableau
+    table = ax.table(
+        cellText=cell_text,
+        colLabels=col_labels,
+        loc='center',
+        cellLoc='left',
+        colLoc='left'
+    )
+
+    # Style de l'en-tête et des cellules
+    table.auto_set_font_size(False)
+    table.set_fontsize(fontsize)
+    table.scale(1.0, 1.2)  # légère augmentation de hauteur des lignes
+
+    # Couleur d'en-tête + gras
+    for (row, col), cell in table.get_celld().items():
+        if row == 0:
+            cell.set_facecolor('#f2f2f2')
+            cell.set_text_props(fontweight='bold')
+
+    # Titre
+    if title:
+        ax.set_title(title, fontsize=fontsize+2, pad=12)
+
+    plt.tight_layout()
+    plt.show()
+
+
 
 # =========================================================
 # 1) Chargement des données (kagglehub ou local)
@@ -202,7 +245,7 @@ plt.show()
 
 # Voir si nous avons des valeurs absentes
 #na_tbl = df.isna().sum().rename("NaN")
-#show_plotly_table(na_tbl, title="Valeurs nulles ou NaN par colonne")
+#show_mpl_table(na_tbl, title="Valeurs nulles ou NaN par colonne")
 
 
 # =========================================================
@@ -279,7 +322,8 @@ json_vide = [{"Colonne": col, "NaN": df_json_parse[col].isna().sum(), "Vides": (
     for col in JSON_COLS
              if col in df_json_parse.columns]
 
-table_probleme = pd.DataFrame(json_vide).sort_values(by="NaN", ascending=False)
+# Lignes nécessaires pour valider le parsing et s'il y avait des rangées non-traitées
+# table_probleme = pd.DataFrame(json_vide).sort_values(by="NaN", ascending=False)
 # print("Problèmes potentiels:")
 # print(table_probleme)
 
@@ -291,9 +335,9 @@ table_probleme = pd.DataFrame(json_vide).sort_values(by="NaN", ascending=False)
 # =========================================================
 num_col = ["budget", "popularity", "runtime", "vote_average", "year", "month", "day_of_week"]
 
-#print(df_json_parse[num_col].describe())
-_desc_num = df_json_parse[num_col].describe()
-show_plotly_table(_desc_num, title="Statistiques descriptives – variables numériques")
+# Ces lignes ont été utilisées pour la compréhension du dataset
+# _desc_num = df_json_parse[num_col].describe()
+# show_mpl_table(_desc_num, title="Statistiques descriptives – variables numériques")
 
 # Catégoriser revenue_yj en quantiles pour boxplots
 df_json_parse["revenue_category"] = pd.qcut(df_json_parse["revenue_yj"], q=4, duplicates="drop")
@@ -334,7 +378,7 @@ plt.show()
 
 # Création des asymétries des colonnes numériques originales
 sk_num = df_json_parse[num_col].skew(numeric_only=True)
-show_plotly_table(sk_num.sort_values(ascending=False).rename("skew"), title="Asymétrie des variables numériques")
+show_mpl_table(sk_num.sort_values(ascending=False).rename("skew"), title="Asymétrie des variables numériques avant traitement")
 
 # =========================================================
 # 6) Transformations numériques en Yeo-Johnson ou log1p
@@ -385,7 +429,7 @@ plt.show()
 
 # Création des asymétrie des colonnes numériques transformées
 sk_new = df_json_parse[new_num_col].skew(numeric_only=True).sort_values(ascending=False)
-show_plotly_table(sk_new.rename("skew"), title="Asymétrie des variables numériques transformées")
+show_mpl_table(sk_new.rename("skew"), title="Asymétrie des variables numériques transformées après transformation")
 
 # =========================================================
 # 7) Modélisation
@@ -695,7 +739,7 @@ _ols_tbl = pd.concat([
 _ci = ols.conf_int()
 _ols_tbl["[0.025"] = _ci[0]
 _ols_tbl["0.975]"] = _ci[1]
-show_plotly_table(_ols_tbl, title="Coefficients")
+show_mpl_table(_ols_tbl, title="Coefficients")
 
 # =========================================================
 # 9) Table des corrélations numériques avec la cible
@@ -706,14 +750,14 @@ corr_feats = [c for c in corr_feats if c in df_json_parse.columns]
 df_corr_train = df_json_parse.loc[X_train.index].copy()
 
 corr_yj_df = correlations_with_target(df_corr_train, feat_cols=corr_feats, target_col="revenue_yj")
-show_plotly_table(corr_yj_df, title="Corrélations vs revenue_yj (TRAIN)")
+show_mpl_table(corr_yj_df, title="Corrélations vs revenue_yj (TRAIN)")
 
 # Export corrélation avec valeurs transformées
 corr_yj_df.to_csv("tmdb_correlations_train_yj.csv", index=False)
 print("Exporté: tmdb_correlations_train_yj.csv")
 
 corr_raw_df = correlations_with_target(df_corr_train, feat_cols=corr_feats, target_col="revenue")
-show_plotly_table(corr_raw_df, title="Corrélations vs revenue (TRAIN)")
+show_mpl_table(corr_raw_df, title="Corrélations vs revenue (TRAIN)")
 
 # Export du csv des corrélations avec valeurs raw
 corr_raw_df.to_csv("tmdb_correlations_train_raw.csv", index=False)
