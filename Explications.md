@@ -7,8 +7,8 @@ De plus, puisqu’il était impossible de déterminer si un budget ou un revenu 
 
 ## Hypothèse initiale
 L’hypothèse alternative initiale stipulait qu’au moins un des attributs de la base de données avait un impact significatif sur les revenus générés. 
-Elle est confirmée par ce tableau :
-<img width="637" height="138" alt="image" src="https://github.com/user-attachments/assets/5d3d889c-53f6-4751-b57b-f8c6e7fd628d" />
+Elle est confirmée par ce tableau :<br><br>
+<img width="637" height="138" alt="image" src="https://github.com/user-attachments/assets/5d3d889c-53f6-4751-b57b-f8c6e7fd628d" /><br><br>
 
 On constate que popularity_log et budget_yj ont un impact, car leurs valeurs de p sont inférieures à 0,05. Nous pouvons donc rejeter l’hypothèse nulle.
 
