@@ -17,6 +17,7 @@ tmdb-elasticnet-pipeline/
 │   └── Asymétries pré-traitement
 │   └── Boxplots transformés vs revenus YJ
 │   └── Asymétries après traitement
+├── Explications
 ├── license                                # Fichier license MIT
 ├── requirements.txt                       # Dépendances Python
 ├── resultats                              # Résultats et explications
