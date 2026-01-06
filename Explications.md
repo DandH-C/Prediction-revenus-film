@@ -18,5 +18,4 @@ Un autre facteur est la période couverte par les données : les films s’éche
 
 J'ai inclus un tableau des métriques: <br><br>
 <img width="316" height="128" alt="image" src="https://github.com/user-attachments/assets/d8921014-2875-4bd4-a64c-1bc7547564c3" /><br><br>
-
 L'on constate que le RMSE et le SMAPE sont trop élévés. En ajsutant les hyperparamètres on obtient pas mieux que le modèle actuel.
