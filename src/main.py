@@ -320,6 +320,7 @@ json_vide = [{"Colonne": col, "NaN": df_json_parse[col].isna().sum(), "Vides": (
 # print("\nAffichage des données parsé json")
 # print("\n", df_json_parse.head())
 
+
 # =========================================================
 # 5) Analyse sur les variables numériques
 # =========================================================
@@ -354,10 +355,10 @@ for j in range(i+1, rows*3):
 
 plt.show()
 
-
 # Création des asymétries des colonnes numériques originales
 sk_num = df_json_parse[num_col].skew(numeric_only=True)
 show_mpl_table(sk_num.sort_values(ascending=False).rename("skew"), title="Asymétrie des variables numériques avant traitement")
+
 
 # =========================================================
 # 6) Transformations numériques en Yeo-Johnson ou log1p
@@ -399,6 +400,7 @@ plt.show()
 # Création des asymétrie des colonnes numériques transformées
 sk_new = df_json_parse[new_num_col].skew(numeric_only=True).sort_values(ascending=False)
 show_mpl_table(sk_new.rename("skew"), title="Asymétrie des variables numériques transformées après transformation")
+
 
 # =========================================================
 # 7) Modélisation
@@ -674,7 +676,8 @@ plt.tight_layout(); plt.show()
 pd.DataFrame({"y_test_revenue": y_test.values, "y_pred_revenue": y_pred}).to_csv(
     "tmdb_elasticnet_predictions.csv", index=False
 )
-print("Exporté: tmdb_elasticnet_predictions_test.csv")
+print("Exporté: tmdb_elasticnet_predictions.csv")
+
 
 # =========================================================
 # 8) Table des corrélations numériques avec la cible
@@ -690,6 +693,7 @@ show_mpl_table(corr_yj_df, title="Corrélations vs revenue_yj (TRAIN)")
 # Export corrélation avec valeurs transformées
 corr_yj_df.to_csv("tmdb_correlations_train_yj.csv", index=False)
 print("Exporté: tmdb_correlations_train_yj.csv")
+
 
 # =========================================================
 # 9) Heatmap des corrélations - Décommentez pour afficher la matrice
