@@ -9,9 +9,9 @@ De plus, puisqu’il était impossible de déterminer si un budget ou un revenu 
 L’hypothèse alternative initiale stipulait qu’au moins un des attributs de la base de données avait un impact significatif sur les revenus générés. 
 Elle est confirmée par ce tableau :<br><br>
 <img width="637" height="138" alt="image" src="https://github.com/user-attachments/assets/5d3d889c-53f6-4751-b57b-f8c6e7fd628d" /><br><br>
-
 On constate que popularity_log et budget_yj ont un impact, car leurs valeurs de p sont inférieures à 0,05. Nous pouvons donc rejeter l’hypothèse nulle.
 
 ## Résultats obtenus
 Les résultats ne sont pas à la hauteur de mes attentes. Un facteur majeur concerne le nombre de lignes dans mon jeu de données. Initialement, il était acceptable, mais l’exclusion des valeurs aberrantes ainsi que des valeurs nulles ou égales à zéro a contribué à le réduire considérablement.
-Un autre facteur est la période couverte par les données : les films s’échelonnent entre 1920 et 2015. Les budgets consacrés aux films il y a près de 100 ans n’ont rien à voir avec les montants actuels, ce qui introduit une forte hétérogénéité.
+Un autre facteur est la période couverte par les données : les films s’échelonnent entre 1920 et 2015. Les budgets consacrés aux films il y a près de 100 ans n’ont rien à voir avec les montants actuels, ce qui introduit une forte hétérogénéité. Le tableau qui suit montre les résidus ainsi que le réel Vs la prédiction. L'on constate que le modèle se trompe énormément avec les films ayant généré de petits revenus mais également avec ceux qui ont généré des revenus immenses, fort probablement des blockbusters. <br><br>
+
