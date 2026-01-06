@@ -9,22 +9,24 @@ transformations numériques (Yeo‑Johnson, log1p), utilisation du modèle Elast
 ## Structure du dépôt
 ```text
 tmdb-elasticnet-pipeline/
-├── src/
-│   └── main.py                            # Script principal
 ├── outputs/                               # Prédictions et corrélations sous format csv
-│   └── Variable cible                     # Distribution et QQ-Plot avant/après transformation Yeo-Johnson
-│   └── Boxplots vs revenus YJ
+│   └── Asymétries après traitement
 │   └── Asymétries pré-traitement
 │   └── Boxplots transformés vs revenus YJ
-│   └── Asymétries après traitement
-├── Explications
-├── license                                # Fichier license MIT
-├── requirements.txt                       # Dépendances Python
+│   └── Boxplots vs revenus YJ
+│   └── Variable cible                     # Distribution et QQ-Plot avant/après transformation Yeo-Johnson
 ├── resultats                              # Résultats et explications
+│   └── Coefficients + p_values
+│   └── Métriques
 │   └── Prédictions                        # Histogramme, QQ-Plot et nuage de points des prédictions
-│   └── tmdb_elasticnet_predictions.csv    # Export des prédictions sous format .csv          
 │   └── tmdb_correlations_train_yj.csv     # Corrélations et p-value en fonction de revenue transformé Yeo-Johnson
-└── README.md                              # Ce fichier
+│   └── tmdb_elasticnet_predictions.csv    # Export des prédictions sous format .csv
+├── src/
+│   └── main.py                            # Script principal
+├── Explications
+├── LICENSE                                # Fichier license MIT    
+├── README.md                              # Ce fichier
+├── requirements.txt                       # Dépendances Python
 ```
 
 ## Données
