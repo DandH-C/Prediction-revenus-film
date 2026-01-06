@@ -9,7 +9,8 @@ De plus, puisqu’il était impossible de déterminer si un budget ou un revenu 
 L’hypothèse alternative initiale stipulait qu’au moins un des attributs de la base de données avait un impact significatif sur les revenus générés. 
 Elle est confirmée par ce tableau :
 <img width="637" height="138" alt="image" src="https://github.com/user-attachments/assets/5d3d889c-53f6-4751-b57b-f8c6e7fd628d" />
-\nOn constate que popularity_log et budget_yj ont un impact, car leurs valeurs de p sont inférieures à 0,05. Nous pouvons donc rejeter l’hypothèse nulle.
+
+On constate que popularity_log et budget_yj ont un impact, car leurs valeurs de p sont inférieures à 0,05. Nous pouvons donc rejeter l’hypothèse nulle.
 
 ## Résultats obtenus
 Les résultats ne sont pas à la hauteur de mes attentes. Un facteur majeur concerne le nombre de lignes dans mon jeu de données. Initialement, il était acceptable, mais l’exclusion des valeurs aberrantes ainsi que des valeurs nulles ou égales à zéro a contribué à le réduire considérablement.
